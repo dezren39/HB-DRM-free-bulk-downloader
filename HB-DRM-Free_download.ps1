@@ -111,6 +111,7 @@ Get-Content $links | Foreach-Object {
 		$bundleName = [Text.Encoding]::ASCII.GetString([Text.Encoding]::GetEncoding("Cyrillic").GetBytes($bundleName))
 		$bundleTitle = $bundleName -replace '[^a-zA-Z0-9/_/''/\-/ ]', '_'
 		$bundleTitle = $bundleTitle -replace '/', '_'
+		$bundleTitle += "_" + ($requestLink -split 'key=')[1]
 		write-host ==============================================================
 		write-host $currentDownload "/" $downloadCount - $bundleTitle
 		write-host $requestLink
