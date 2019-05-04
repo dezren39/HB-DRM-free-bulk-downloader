@@ -255,4 +255,3 @@ Get-Content $links | Foreach-Object {
 	}
 }
 $host.ui.RawUI.WindowTitle = "D: " + $currentDownload + "/" + $downloadCount +" `| Finished"
-pause
