@@ -162,9 +162,9 @@ Get-Content $links | Foreach-Object {
 		$bundleName = [Text.Encoding]::ASCII.GetString([Text.Encoding]::GetEncoding("Cyrillic").GetBytes($bundleName))
 		$bundleTitle = $bundleName -replace '[^a-zA-Z0-9/_/''/\-/ ]', '_'
 		$bundleTitle = $bundleTitle -replace '/', '_'
-		# $bundleTitle += "_" + ($requestLink -split 'key=')[1]
 		$bundleTitle = $bundleTitle.trim()
 		if ($bundleTitle -eq "Humble Bundle - Key already claimed") { $bundleTitle += "`n`nTo download this bundle you need to open Internet Explorer and `nlogin into the Humble Bundle account tied to this bundle.`nOnce you're logged in, you can close the IE window.`n" }
+		$bundleTitle += "_" + ($requestLink -split 'key=')[1]
 		write-host ==============================================================
 		write-host $currentDownload "/" $downloadCount - $bundleTitle
 		write-host $requestLink
