@@ -8,9 +8,13 @@ It uses Internet Explorer instance to retrieve the links so all you need to do i
 To install newer Powershell on Windows 7, visit this link: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-windows-powershell?view=powershell-6
 
 ----------------------
-HB DRM-Free bulk downloader 0.3.3
+HB DRM-Free bulk downloader 0.3.6
 ----------------------
 Bundle files are downloaded sequentially and saved in folder structure as shown in this example: downloads\bundleName\bookName\specificBookFile.extension
+
+latest additions:
+- support for MD5 hash file check (more info below)
+- it's possible to download bundles with leading/trailing space in titles now (thanks to ratinoxone from GitHub)
 
 To specify your preferred label/extension/format for link only, use:
 - https://www.humblebundle.com/downloads?key=XXXXXXXXXXXXXXXX#pdf
@@ -32,9 +36,22 @@ platform global switches:
 - @linux
 - all of them works but it has to be the exact wording (e.g. @android)
 
+md5 global switches:
+- !md5+ (default, enable md5 file integrity check)
+- !md5- (disable md5 file integrity check)
+- !md5s+ (default, enable md5 hash check/file integrity of previously stored/downloaded files, disabled if you use !md5-)
+- !md5s- (disable md5 hash check/file integrity of previously stored/downloaded files)
+
+log files:
+- LOG-all.txt -- complete log(downloads + errors)
+- LOG-error.txt -- log of errors only (md5 fails and unsuccessful downloads)
+- if you use !md5-, LOG-all.txt and LOG-error.txt will contain only unsuccessful downloads
+
 other global switches:
-- %strict (this will download only your preferred label)
 - %normal (default, this will return to downloading at least 1 label)
+- %strict (this will download only your preferred label)
+
+another set of global switches:
 - %pref (default, download first found preferred label in list and skip others)
 - %all (download all preferred labels)
 
@@ -64,3 +81,40 @@ If the window closes fast after starting RUN.bat, follow these steps:
 4. After that the RUN.bat should work as intented.
 
 If you'd like to create a shortcut for the script, you just need to make shortcut of RUN.bat file.
+
+Possible Errors - download stuck at the beginning
+----------------------
+If your bundle haven't started downloading already for 10+ sec and you were redirected here then open your Internet Explorer and go to https://www.humblebundle.com/.
+Try to click on the dropdown menu button in top right corner, it doesn't respond most likely. You also can't see any bundles on the front page.
+
+To make it work, follow these steps:
+1. Open Internet Explorer, press alt (the toolbar will show up), go to Tools > Internet Options > Security Tab(at the top) > Trusted sites
+   - move the vertical bar to the bottom (Low option)
+   - click on Sites button and add 'https://www.humblebundle.com/' into the list (otherwise the site would load only partially)
+2. Enable Protected Mode for Trusted sites (ReadyState was blank when this was disabled so script was stuck).
+3. It's possible you'll get logged out of Humble Bundle after changing to Protected Mode so just login there again.
+
+My script loads IE instance only for links and once the download starts, the IE instance should be already closed.
+If you saw the PowerShell message to check this error, the IE instance is already closed as well.
+
+Killing Internet Explorer instances might help if you encountered problems before it started working. 
+
+The fastest way to do it is to run this 'stop process' command in PowerShell: 
+get-process iexplore.exe | stop-process
+
+You can check afterwards with 'get-process iexplore.exe', if you've got an error it means the IE doesn't have any windows opened. If you still have the iexplore.exe there it means you have to launch Powershell as administrator (option in File menu in your File Explorer) and run the same 'stop process' command again.
+
+Possible Errors - 'Humble Bundle - Key already claimed'
+----------------------
+If you're getting 'Humble Bundle - Key already claimed' instead of bundle title when you run the script, it means you're not logged into your Humble Bundle account (which owns the bundle) in the Internet Explorer.
+
+Possible Errors - 'Exception from HRESULT: 0x800A01B6'
+----------------------
+If you're getting 'Exception from HRESULT: 0x800A01B6' error, try launching RUN.bat as administrator.
+You could also follow steps in 'Possible Errors - download stuck at the beginning' above.
+
+Possible Errors - unremovable folder with leading/trailing space
+----------------------
+If my script created folder with space (" ") in name and you can't remove it now, you could try this to fix it:
+quote by JustSolvedIt from https://superuser.com/questions/565334/rename-delete-windows-x64-folder-with-leading-and-trailing-space/911994#911994
+> I just had a similar problem with folder "Monuments - Discography " created in linux. Windows Vista and Windows 7 couldn't recognize this folder as a valid data and when I tried to rename or remove it I got Info message saying that folder does not exist etc. The solution was to explore a dir with 7zip file manager and rename the folder by removing a white space from the end. Simple. Now I can enjoy the music once again :D
